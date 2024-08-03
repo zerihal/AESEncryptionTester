@@ -12,19 +12,18 @@ namespace AESEncryptionTester
     class Program
     {
         private static Stopwatch _sw = new Stopwatch();
-        private static int _operations = 150;
         private static Dictionary<int, double> _keys = new Dictionary<int, double> { { 128, 0 }, { 192, 0 }, { 256, 0 } };
         private static int _randomTextSize = 1000;
         private static int _noPhases = 10;
 
         public static void Main(string[] args)
         {
-            Console.WriteLine($"Beginning encryption and decryption phases - {_operations} ops");
+            Console.WriteLine($"Beginning encryption and decryption phases - {_noPhases} rounds");
 
             for (var x = 0; x < _noPhases; x++)
             {
-                // The first phase does not give accurate results due to initial object generation - this needs to be
-                // done to prep for further test phases, but output and results should be ignored.
+                // The first phase does not seem to give accurate results due to initial object generation - this needs 
+                // to be done to prep for further test phases, but output and results should be ignored.
                 if (x == 0)
                     Console.WriteLine("Prep phase (output ignored)");
                 else
