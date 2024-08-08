@@ -25,10 +25,10 @@ namespace AESEncryptionTester
         /// <param name="Key">Symmetric encryption key.</param>
         /// <param name="IV">Intialisation vector.</param>
         /// <returns>Ciphertext (byte array).</returns>
-        public static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key, byte[] IV)
+        public static byte[] EncryptStringToBytes_Aes(object? plainText, byte[] Key, byte[] IV)
         {
             // Check arguments.
-            if (plainText == null || plainText.Length <= 0)
+            if (plainText == null || plainText is string s && s.Length <= 0)
                 throw new ArgumentNullException("plainText");
             if (Key == null || Key.Length <= 0)
                 throw new ArgumentNullException("Key");
@@ -128,6 +128,23 @@ namespace AESEncryptionTester
                 plaintext += RandomChar;
             
             return plaintext;
+        }
+
+        /// <summary>
+        /// Generates a temporary file of a given size (in MB).
+        /// </summary>
+        /// <param name="length">Size of the file to generation (MB).</param>
+        /// <returns>Path to the temp file.</returns>
+        public static string GenerateFile(long length)
+        {
+            var tempFile = Path.GetTempFileName();
+
+            using (var fileStream = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                fileStream.SetLength(length * 1024);
+            }
+
+            return tempFile;
         }
     }
 }

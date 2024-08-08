@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.IO;
 using System.Security.Cryptography;
 
 namespace AESEncryptionTester
@@ -18,59 +19,90 @@ namespace AESEncryptionTester
 
         public static void Main(string[] args)
         {
-            Console.WriteLine($"Beginning encryption and decryption phases - {_noPhases} rounds");
+            Console.WriteLine($"Beginning encryption and decryption phases - {_noPhases} rounds\n");
 
-            for (var x = 0; x < _noPhases; x++)
+            for (var mode = 0; mode <= 1; mode++)
             {
-                // The first phase does not seem to give accurate results due to initial object generation - this needs 
-                // to be done to prep for further test phases, but output and results should be ignored.
-                if (x == 0)
-                    Console.WriteLine("Prep phase (output ignored)");
-                else
-                    Console.WriteLine($"Phase {x} ...");
+                if (mode == 0)
+                    Console.WriteLine($"*** ENCRYPTION TEST WITH RANDOMLY GENERATED STRING ***\n");
+                else if (mode == 1)
+                    Console.WriteLine($"*** ENCRYPTION TEST WITH SIMPLE GENERATED FILE (100MB) ***\n");
 
-                // Generate some random text (same text to be used for each key size test)
-                var ranStr = EncryptionHelper.GenerateRandomPlaintext(_randomTextSize);
-
-                foreach (var key in _keys)
+                for (var x = 0; x < _noPhases; x++)
                 {
-                    if (x != 0)
-                        Console.WriteLine($"Using key length of {key.Key}-bit");
+                    // The first phase does not seem to give accurate results due to initial object generation - this needs 
+                    // to be done to prep for further test phases, but output and results should be ignored.
+                    if (x == 0)
+                        Console.WriteLine("Prep phase (output ignored)");
+                    else
+                        Console.WriteLine($"Phase {x} ...");
 
-                    _sw.Restart();
+                    // Generate some random text (same text to be used for each key size test)
+                    object? input = null;
+                    var tempfile = string.Empty;
 
-                    // Create new instance of AES
-                    var tempAes = Aes.Create();
-
-                    // Create a new instance of the Aes class. This generates a new key and initialization vector (IV).
-                    tempAes.KeySize = key.Key;
-                    tempAes.GenerateKey();
-
-                    for (var i = 0; i < 50; i++)
+                    if (mode == 0)
                     {
-                        // Encrypt the string to an array of bytes.
-                        byte[] encrypted = EncryptionHelper.EncryptStringToBytes_Aes(ranStr, tempAes.Key, tempAes.IV);
-
-                        // Decrypt the bytes to a string.
-                        string roundtrip = EncryptionHelper.DecryptStringFromBytes_Aes(encrypted, tempAes.Key, tempAes.IV);
-
-                        //Display the original data and the decrypted data.
-                        //Console.WriteLine("Original:   {0}", original);
-                        //Console.WriteLine("Round Trip: {0}", roundtrip);
+                        input = EncryptionHelper.GenerateRandomPlaintext(_randomTextSize);
+                    }
+                    else if (mode == 1)
+                    {
+                        tempfile = EncryptionHelper.GenerateFile(100);
+                        input = File.Open(tempfile, FileMode.Open);
                     }
 
-                    _sw.Stop();
-
-                    // Dispose AES resources
-                    tempAes.Clear();
-                    tempAes?.Dispose();
-
-                    if (x != 0)
+                    foreach (var key in _keys)
                     {
-                        _keys[key.Key] += _sw.Elapsed.TotalMilliseconds;
-                        Console.WriteLine($"Elapsed time: {_sw.Elapsed.TotalMilliseconds} ms");
+                        if (x != 0)
+                            Console.WriteLine($"Using key length of {key.Key}-bit");
+
+                        _sw.Restart();
+
+                        // Create new instance of AES
+                        var tempAes = Aes.Create();
+
+                        // Create a new instance of the Aes class. This generates a new key and initialization vector (IV).
+                        tempAes.KeySize = key.Key;
+                        tempAes.GenerateKey();
+
+                        // Simulate 50 messages (encyption and descryptions of the data)
+                        for (var i = 0; i < 50; i++)
+                        {
+                            // Encrypt the string to an array of bytes.
+                            byte[] encrypted = EncryptionHelper.EncryptStringToBytes_Aes(input, tempAes.Key, tempAes.IV);
+
+                            // Decrypt the bytes to a string.
+                            string roundtrip = EncryptionHelper.DecryptStringFromBytes_Aes(encrypted, tempAes.Key, tempAes.IV);
+
+                            //Display the original data and the decrypted data.
+                            //Console.WriteLine("Original:   {0}", original);
+                            //Console.WriteLine("Round Trip: {0}", roundtrip);
+                        }
+
+                        _sw.Stop();
+
+                        // Dispose AES resources
+                        tempAes.Clear();
+                        tempAes?.Dispose();
+
+                        // Cleanup file if applicable
+                        if (mode == 1 && input is FileStream fs)
+                        {
+                            fs.Close();
+
+                            if (File.Exists(tempfile))
+                                File.Delete(tempfile);
+                        }
+
+                        if (x != 0)
+                        {
+                            _keys[key.Key] += _sw.Elapsed.TotalMilliseconds;
+                            Console.WriteLine($"Elapsed time: {_sw.Elapsed.TotalMilliseconds} ms");
+                        }
                     }
                 }
+
+                Console.WriteLine($"\n");
             }
 
             foreach (var key in _keys)
