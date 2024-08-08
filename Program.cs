@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.IO;
 using System.Security.Cryptography;
 
 namespace AESEncryptionTester
@@ -30,7 +29,7 @@ namespace AESEncryptionTester
 
                 for (var x = 0; x < _noPhases; x++)
                 {
-                    // The first phase does not seem to give accurate results due to initial object generation - this needs 
+                    // The first phase does not seem to give accurate results due to test intialisation (app in memory) - this needs 
                     // to be done to prep for further test phases, but output and results should be ignored.
                     if (x == 0)
                         Console.WriteLine("Prep phase (output ignored)");
@@ -56,34 +55,38 @@ namespace AESEncryptionTester
                         if (x != 0)
                             Console.WriteLine($"Using key length of {key.Key}-bit");
 
-                        _sw.Restart();
-
-                        // Create new instance of AES
-                        var tempAes = Aes.Create();
-
-                        // Create a new instance of the Aes class. This generates a new key and initialization vector (IV).
-                        tempAes.KeySize = key.Key;
-                        tempAes.GenerateKey();
-
-                        // Simulate 50 messages (encyption and descryptions of the data)
-                        for (var i = 0; i < 50; i++)
+                        // Do 2 rounds for each key, taking the timing from the second for more accurate performance testing
+                        for (var i = 0; i <= 1; i++)
                         {
-                            // Encrypt the string to an array of bytes.
-                            byte[] encrypted = EncryptionHelper.EncryptStringToBytes_Aes(input, tempAes.Key, tempAes.IV);
+                            _sw.Restart();
 
-                            // Decrypt the bytes to a string.
-                            string roundtrip = EncryptionHelper.DecryptStringFromBytes_Aes(encrypted, tempAes.Key, tempAes.IV);
+                            // Create new instance of AES
+                            var tempAes = Aes.Create();
 
-                            //Display the original data and the decrypted data.
-                            //Console.WriteLine("Original:   {0}", original);
-                            //Console.WriteLine("Round Trip: {0}", roundtrip);
+                            // Create a new instance of the Aes class. This generates a new key and initialization vector (IV).
+                            tempAes.KeySize = key.Key;
+                            tempAes.GenerateKey();
+
+                            // Simulate 50 messages (encyption and descryptions of the data)
+                            for (var i2 = 0; i2 < 50; i2++)
+                            {
+                                // Encrypt the string to an array of bytes.
+                                byte[] encrypted = EncryptionHelper.EncryptStringToBytes_Aes(input, tempAes.Key, tempAes.IV);
+
+                                // Decrypt the bytes to a string.
+                                string roundtrip = EncryptionHelper.DecryptStringFromBytes_Aes(encrypted, tempAes.Key, tempAes.IV);
+
+                                //Display the original data and the decrypted data.
+                                //Console.WriteLine("Original:   {0}", original);
+                                //Console.WriteLine("Round Trip: {0}", roundtrip);
+                            }
+
+                            _sw.Stop();
+
+                            // Dispose AES resources
+                            tempAes.Clear();
+                            tempAes?.Dispose();
                         }
-
-                        _sw.Stop();
-
-                        // Dispose AES resources
-                        tempAes.Clear();
-                        tempAes?.Dispose();
 
                         // Cleanup file if applicable
                         if (mode == 1 && input is FileStream fs)
