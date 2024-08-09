@@ -83,11 +83,11 @@ namespace AESEncryptionTestUtils
                         tempAes?.Dispose();
 
                         // Cleanup file if applicable
-                        if (round == 1 && settings.Mode != TestMode.File && input is FileStream fs)
+                        if (round == 1 && input is FileStream fs)
                         {
                             fs.Close();
 
-                            if (File.Exists(tempfile))
+                            if (settings.Mode != TestMode.File && File.Exists(tempfile))
                                 File.Delete(tempfile);
                         }
 
