@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using AESEncryptionTestUtils.Interfaces;
+using System.Diagnostics;
 using System.Security.Cryptography;
 
 namespace AESEncryptionTestUtils
@@ -8,7 +9,7 @@ namespace AESEncryptionTestUtils
         private readonly Stopwatch _sw = new Stopwatch();
         private readonly Dictionary<int, double> _keys = new Dictionary<int, double> { { 128, 0 }, { 192, 0 }, { 256, 0 } };
 
-        public void RunTests(AESTestSettings settings)
+        public IAesTestResult RunTests(AESTestSettings settings)
         {
             Console.WriteLine($"Beginning encryption and decryption phases - {settings.NoPhases} rounds\n");
 
@@ -65,8 +66,8 @@ namespace AESEncryptionTestUtils
                         tempAes.KeySize = key.Key;
                         tempAes.GenerateKey();
 
-                        // Simulate 50 messages (encyption and descryptions of the data)
-                        for (var i2 = 0; i2 < 50; i2++)
+                        // Simulate 100 messages (encyption and descryptions of the data)
+                        for (var i2 = 0; i2 < 100; i2++)
                         {
                             // Encrypt the string to an array of bytes.
                             var encrypted = EncryptionHelper.EncryptStringToBytes_Aes(input, tempAes.Key, tempAes.IV);
@@ -105,6 +106,8 @@ namespace AESEncryptionTestUtils
             {
                 Console.WriteLine($"Total operation time for {key.Key} bit key = {_keys[key.Key]}");
             }
+
+            return new AesTestResult(_keys);
         }
     }
 }
