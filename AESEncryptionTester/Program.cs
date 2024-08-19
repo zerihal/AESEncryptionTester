@@ -11,6 +11,7 @@ namespace AESEncryptionTester
     class Program
     {
         private static string _defaults = "defaults.aestester";
+        private static string _defaultTestSettings = "AESDefaultTestSettings.xml";
 
         public static void Main(string[] args)
         {
@@ -18,6 +19,14 @@ namespace AESEncryptionTester
             Console.WriteLine("**************************");
 
             var defaultSettingsFile = GetDefaultSettings();
+
+            if (string.IsNullOrWhiteSpace(defaultSettingsFile))
+            {
+                AESTestSettings.CreateDefaultTestSettings(_defaultTestSettings);
+                SetDefaultSettings(_defaultTestSettings);
+                defaultSettingsFile = _defaultTestSettings;
+            }
+
             var useExisting = false;
 
             if (!string.IsNullOrWhiteSpace(defaultSettingsFile))
@@ -42,7 +51,7 @@ namespace AESEncryptionTester
             
             if (!useExisting)
             {
-                Console.WriteLine("Specify settings file path:");
+                Console.WriteLine("Specify settings filename and path (this must be an XML file with settings elements):");
                 defaultSettingsFile = Console.ReadLine();
 
                 if (defaultSettingsFile != null)

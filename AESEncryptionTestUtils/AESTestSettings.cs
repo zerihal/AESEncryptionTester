@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -137,6 +136,34 @@ namespace AESEncryptionTestUtils
             }
 
             return settings;
+        }
+
+        /// <summary>
+        /// Creates default test settings file.
+        /// </summary>
+        /// <param name="filename">Filename (including path if not in app root).</param>
+        public static void CreateDefaultTestSettings(string filename)
+        {
+            var settings = new XmlWriterSettings() 
+            { 
+                Indent = true,
+                IndentChars = ("   "),
+                CloseOutput = true,
+                OmitXmlDeclaration = true            
+            };
+
+            using (XmlWriter writer = XmlWriter.Create(filename, settings))
+            {
+                writer.WriteStartElement("AESTestSettings");
+                writer.WriteElementString("TestMode", "0");
+                writer.WriteElementString("RandomTextSize", "1000");
+                writer.WriteElementString("Phases", "10");
+                writer.WriteElementString("Messages", "100");
+                writer.WriteElementString("TestFile", null);
+                writer.WriteElementString("OutputFile", "AESTestResults.csv");
+                writer.WriteEndElement();
+                writer.Flush();
+            }
         }
     }
 }

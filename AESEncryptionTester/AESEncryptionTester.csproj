@@ -5,11 +5,19 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>1.0.1.1</Version>
+    <Version>1.0.1.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AESEncryptionTestUtils\AESEncryptionTestUtils.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if $(ConfigurationName) == Debug copy /y $(SolutionDir)AESEncryptionTester\Assets $(TargetDir)" />
+  </Target>
 
 </Project>

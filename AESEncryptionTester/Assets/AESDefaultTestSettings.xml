@@ -1,0 +1,9 @@
+<AESTestSettings>
+	<!-- Test mode 0 = default, 1 = file, 2 = plaintext only -->
+	<TestMode>0</TestMode>
+	<RandomTextSize>1000</RandomTextSize>
+	<Phases>10</Phases>
+	<Messages>100</Messages>
+	<TestFile></TestFile>
+	<OutputFile>AESTestResults.csv</OutputFile>
+</AESTestSettings>
