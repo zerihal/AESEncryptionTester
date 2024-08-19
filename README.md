@@ -28,7 +28,9 @@ The test application will use the following settings to perform encryption tests
 
 Running the application will perform encryption and decryption tests using the same input (plaintext or file) for each key size, aggregating the timing results (in milliseconds) for each phase of testing and then averaging the timings over the number of phases in the output file (console will report both). If the application is run multiple times, each test run will be appended to the output file and the overall averages for all test runs recalculated each time.
 
+Settings can be changed in either the default settings file or by entering a new filename (including path if not in app root) at the console prompt. The path of the settings file will be saved in the defaults.aestester file, which can also be manually modified to specify a different path to the settings file.
 
+  
 ************************
 Author: John Sweet   
 Updated: August 2024 
