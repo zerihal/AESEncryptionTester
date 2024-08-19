@@ -52,10 +52,14 @@ namespace AESEncryptionTester
             var settings = AESTestSettings.LoadSettings(defaultSettingsFile, out var defaultUsed);
             OutputSettings(settings, defaultUsed);
 
-            //var testManager = new AESTestManager();
-            //var res = testManager.RunTests(new AESTestSettings());
-            //res.WriteToFile(@"C:\Temp\testRes.csv");
+            var testManager = new AESTestManager();
+            Console.WriteLine("Starting encryption tests ...");
+            var res = testManager.RunTests(settings);
 
+            if (settings.OutputFile != null)
+                res.WriteToFile(settings.OutputFile);
+
+            Console.WriteLine("Tests completed\nPress any key to exit");
             Console.ReadKey();
         }
 
