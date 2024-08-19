@@ -26,3 +26,9 @@ Test file - File to test encryption and decryption on (full filename and path if
 Output file - Full filename and path (if not in app root) for the csv output file (default AESTestResults.csv)
 
 Running the application will perform encryption and decryption tests using the same input (plaintext or file) for each key size, aggregating the timing results (in milliseconds) for each phase of testing and then averaging the timings over the number of phases in the output file (console will report both). If the application is run multiple times, each test run will be appended to the output file and the overall averages for all test runs recalculated each time.
+
+
+************************
+Author: John Sweet   
+Updated: August 2024 
+************************
