@@ -3,6 +3,7 @@
     public enum TestMode
     {
         Default,
-        File
+        File,
+        PlainTextOnly
     }
 }

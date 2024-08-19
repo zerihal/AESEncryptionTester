@@ -14,6 +14,7 @@ namespace AESEncryptionTestUtils
             Console.WriteLine($"Beginning encryption and decryption phases - {settings.NoPhases} rounds\n");
 
             var initRound = settings.Mode == TestMode.File ? 1 : 0;
+            var secondRound = settings.Mode == TestMode.PlainTextOnly ? 0 : 1;
 
             for (var round = initRound; round <= 1; round++)
             {
@@ -66,8 +67,8 @@ namespace AESEncryptionTestUtils
                         tempAes.KeySize = key.Key;
                         tempAes.GenerateKey();
 
-                        // Simulate 100 messages (encyption and descryptions of the data)
-                        for (var i2 = 0; i2 < 100; i2++)
+                        // Simulate a number of messages (encyption and descryptions of the data), as specified in settings
+                        for (var i2 = 0; i2 < settings.NoMessages; i2++)
                         {
                             // Encrypt the string to an array of bytes.
                             var encrypted = EncryptionHelper.EncryptStringToBytes_Aes(input, tempAes.Key, tempAes.IV);
@@ -104,7 +105,11 @@ namespace AESEncryptionTestUtils
 
             foreach (var key in _keys)
             {
-                Console.WriteLine($"Total operation time for {key.Key} bit key = {_keys[key.Key]}");
+                Console.WriteLine($"Total operation time for {key.Key} bit key over {settings.NoPhases} tests = {_keys[key.Key]}");
+               
+                // Update total operation time with average and output
+                _keys[key.Key] = _keys[key.Key] / settings.NoPhases;
+                Console.WriteLine($"Average operation time = {_keys[key.Key]}");
             }
 
             return new AesTestResult(_keys);
