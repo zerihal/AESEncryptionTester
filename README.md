@@ -6,8 +6,7 @@ of rounds/phases using a different randomly generated block of text for each one
 
 See https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.aes?view=net-8.0 for details.
 
-Download zip containing exe and required files to run from [here](https://github.com/zerihal/AESEncryptionTester/releases/tag/R1)
-Simply unzip the downloaded file and run the exe to perform AES encryption testing
+Download zip containing exe and required files to run from [here](https://github.com/zerihal/AESEncryptionTester/releases/tag/R1) and then unzip the downloaded file and run the exe to perform AES encryption testing.
 
 # Operation
 
